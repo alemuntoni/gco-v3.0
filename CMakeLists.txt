@@ -5,20 +5,23 @@ if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-set(lib_srcs
-    GCoptimization.cpp
-    GCoptimization.h
-    LinkedBlockList.cpp
-    LinkedBlockList.h
-    block.h
-    energy.h
-    graph.h
-    )
+set(gco_headers
+	GCoptimization.h
+	LinkedBlockList.h
+	block.h
+	energy.h
+	graph.h
+	graph.inl
+	maxflow.inl)
+
+set(gco_sources
+	GCoptimization.cpp
+	LinkedBlockList.cpp)
 
 set(example_srcs
     example.cpp)
 
-add_library(gco ${lib_srcs})
+add_library(gco ${gco_headers} ${gco_sources})
 add_executable(example ${example_srcs})
 target_link_libraries(example gco)
 

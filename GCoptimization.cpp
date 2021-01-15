@@ -15,11 +15,8 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
-#define NOMINMAX
 #include <windows.h>
-
 extern "C" gcoclock_t GCO_CLOCKS_PER_SEC = 0;
-
 extern "C" inline gcoclock_t gcoclock() // TODO: not thread safe; separate begin/end so that end doesn't have to check for query frequency
 {
 	gcoclock_t result = 0;
@@ -30,9 +27,7 @@ extern "C" inline gcoclock_t gcoclock() // TODO: not thread safe; separate begin
 }
 
 #else
-extern "C" {
 gcoclock_t GCO_CLOCKS_PER_SEC = CLOCKS_PER_SEC;
-}
 extern "C" gcoclock_t gcoclock() { return clock(); }
 #endif
 
@@ -1174,7 +1169,7 @@ void GCoptimization::updateLabelingInfo(bool updateCounts, bool updateActive, bo
 			for ( LabelCost* lc = m_labelcostsAll; lc; lc = lc->next )
 				lc->active = false;
 
-			EnergyType energy = 0;
+			//EnergyType energy = 0;
 			for ( LabelID l = 0; l < m_num_labels; ++l ) 
 				if ( m_labelCounts[l] )
 					for ( LabelCostIter* lci = m_labelcostsByLabel[l]; lci; lci = lci->next ) 
@@ -1231,7 +1226,7 @@ bool GCoptimization::alpha_expansion(LabelID alpha_label)
 		// and compute the smooth costs between variables.
 		EnergyT e(size+m_labelcostCount, // poor guess at number of pairwise terms needed :(
 				 m_numNeighborsTotal+(m_labelcostCount?size+m_labelcostCount : 0),
-				 handleError);
+                 (void(*)(const char*))handleError);
 		e.add_variable(size);
 		m_beforeExpansionEnergy = 0;
 		if ( m_setupDataCostsExpansion   ) (this->*m_setupDataCostsExpansion  )(size,alpha_label,&e,activeSites);
@@ -1365,7 +1360,7 @@ void GCoptimization::alpha_beta_swap(LabelID alpha_label, LabelID beta_label)
 
 		// Create binary variables for each remaining site, add the data costs,
 		// and compute the smooth costs between variables.
-		EnergyT e(size,m_numNeighborsTotal,handleError);
+        EnergyT e(size,m_numNeighborsTotal,(void(*)(const char*))handleError);
 		e.add_variable(size);
 		if ( m_setupDataCostsSwap   ) (this->*m_setupDataCostsSwap  )(size,alpha_label,beta_label,&e,activeSites);
 		if ( m_setupSmoothCostsSwap ) (this->*m_setupSmoothCostsSwap)(size,alpha_label,beta_label,&e,activeSites);
@@ -1497,7 +1492,7 @@ void GCoptimizationGridGraph::giveNeighborInfo(SiteID site, SiteID *numSites, Si
 void GCoptimizationGridGraph::computeNeighborWeights(EnergyTermType *vCosts,EnergyTermType *hCosts)
 {
 	SiteID i,n,nSite;
-	GCoptimization::EnergyTermType weight;
+    GCoptimization::EnergyTermType weight = 0;
 	
 	m_neighborsWeights = new EnergyTermType[m_num_sites*4];
 
