@@ -1,5 +1,5 @@
 project(gco)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.10)
 
 option(BUILD_GCO_EXAMPLE "Build an example executable that runs on GCO lib." OFF)
 option(BUILD_WITH_FLOATING_POINT_ENERGY_TYPES "" ON)
@@ -26,8 +26,8 @@ set(example_srcs
 
 add_library(gco ${gco_headers} ${gco_sources})
 if (BUILD_GCO_EXAMPLE)
-	add_executable(example ${example_srcs})
-	target_link_libraries(example gco)
+	add_executable(gco_example ${example_srcs})
+	target_link_libraries(gxo_example gco)
 endif()
 
 if (BUILD_WITH_FLOATING_POINT_ENERGY_TYPES)
